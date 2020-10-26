@@ -152,21 +152,6 @@ class MilestoneAgents(GameStateTarock):
                                     self.stack[1], card1))
             return max(options, key=lambda x: x[0])[3]
 
-    def generate_game_tree(self):
-        #okay so here is the idea, we want to construct the tree where every
-        #possible outcome is stored
-        #take the starting player and just generate everything,
-        #store it in memory and then be able to retrieve every move possible
-        #herc4 -> herc kral -> herc dama |
-        depth = 0
-        hand1 = self.player_hands[self.player_order[0]]
-        hand2 = self.player_hands[self.player_order[1]]
-        hand3 = self.player_hands[self.player_order[2]]
-
-        for card1 in hand1:
-            for card2 in self.legal_moves(card1, hand2):
-                for card3 in self.legal_moves(card1, hand3):
-                    return 3
 
 if __name__ == "__main__":
     tb = TarockBasics()
@@ -176,14 +161,3 @@ if __name__ == "__main__":
     tb.print_hand(p1)
     tb.print_hand(p2)
     tb.print_hand(p3)
-
-    udo = Node("Udo")
-    marc = Node("Marc", parent=udo)
-    lian = Node("Lian", parent=marc)
-    dan = Node("Dan", parent=udo)
-    jet = Node("Jet", parent=dan)
-    jan = Node("Jan", parent=dan)
-    joe = Node("Joe", parent=dan)
-
-    print(RenderTree(udo))
-    print(tb.id_to_cards[ma.locally_best_agent(1)])

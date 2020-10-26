@@ -203,7 +203,7 @@ def get_state_open_version1(current_player_id, game_state: GameStateTarock):
             state.append(1)
         else:
             state.append(0)
-    print("imas kralja", state)
+    #print("imas kralja", state)
 
     # imas damo
     if current_player_id == game_state.players[0]:
@@ -222,7 +222,7 @@ def get_state_open_version1(current_player_id, game_state: GameStateTarock):
             state.append(1)
         else:
             state.append(0)
-    print("imas damo", state)
+    #print("imas damo", state)
 
     #imas pob/caval
     if current_player_id == game_state.players[0]:
@@ -241,7 +241,7 @@ def get_state_open_version1(current_player_id, game_state: GameStateTarock):
             state.append(1)
         else:
             state.append(0)
-    print("imas pob/caval", state)
+    #print("imas pob/caval", state)
 
     #imas platlca
     if current_player_id == game_state.players[0]:
@@ -292,7 +292,7 @@ def get_state_open_version1(current_player_id, game_state: GameStateTarock):
             state.append(0)
         else:
             state.append(1)
-    print("imas platlc", state)
+    #print("imas platlc", state)
     #player2 nima vec tarokov
     #player3 nima vec tarokov
     if current_player_id == game_state.players[0]:
@@ -328,6 +328,6 @@ def get_state_open_version1(current_player_id, game_state: GameStateTarock):
             state.append(1)
         else:
             state.append(0)
-    print("skrt taroka player2 in player3", state)
+    #print("skrt taroka player2 in player3", state)
     return state
 

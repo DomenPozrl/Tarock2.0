@@ -106,11 +106,12 @@ class TarockGUI:
             self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
 
 
-
     def draw_cards(self, args):
         cards, starting_y = args
         num = 16
 
+        if not cards:
+            return
 
         starting_x = 10
         ending_x = self.screen.get_width() - 10
@@ -189,7 +190,18 @@ class TarockGUI:
             for func, args in zip(draw_functions, arguments):
                 func(args)
 
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+
+
+
+            pygame.draw.rect(self.screen, (150,150,150), (500, 1050, 120, 40))
+            pygame.draw.rect(self.screen, (255,0,0), (1300, 550, 120, 40))
             for event in pygame.event.get():
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if mouse_x > 500 and mouse_x < 620 and mouse_y > 1050 and mouse_y < 1090:
+                        running = False
+
                 if event.type == pygame.QUIT:
                     running = False
 
@@ -208,10 +220,43 @@ if __name__ == "__main__":
 
 
     t = TarockGUI(testing_state_functions=True)
-    vec1 = get_state_open_version1(1, gst)
-    print(vec1)
-    a = (GET_STATE_PLAY_VERSION1, [0,0,0,0,0,0,0, 0], 800, "GET_STATE_PLAY_VERSION1")
-    b = (GET_STATE_OPEN_VERSION1, vec1, 870, "GET_STATE_OPEN_VERSION1")
-    t.run([ t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties, t.draw_properties], [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), a, b])
 
 
+    while p1:
+        for player in msa.player_order:
+            if player == 1:
+                if msa.stack == []:
+                    vec1 = get_state_open_version1(1, msa)
+                    b = (GET_STATE_OPEN_VERSION1, vec1, 870, "GET_STATE_OPEN_VERSION1")
+                    card = msa.random_agent(1)
+                    msa.update_state(card, 1)
+                    print(f"Stack after player {player} plays: {msa.stack}")
+                    print(f"Current winning player: {msa.current_winning_player}")
+                    t.run([t.draw_cards, t.draw_cards, t.draw_cards,  t.draw_properties], [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), b])
+                    t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                          [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), (msa.stack, 1050),
+                           b])
+                else:
+                    vec1 = get_state_play_version1(1, msa)
+                    a = (GET_STATE_PLAY_VERSION1, vec1, 800, "GET_STATE_PLAY_VERSION1")
+                    t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                          [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), (msa.stack, 1050),
+                           a])
+                    card = msa.random_agent(1)
+                    msa.update_state(card, 1)
+                    print(f"Stack after player {player} plays: {msa.stack}")
+                    print(f"Current winning player: {msa.current_winning_player}")
+
+                    t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                          [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), (msa.stack, 1050),
+                           a])
+
+            else:
+                card = msa.random_agent(player)
+                msa.update_state(card, player)
+                print(f"Stack after player {player} plays: {msa.stack}")
+                print(f"Current winning player: {msa.current_winning_player}")
+                t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                      [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), (msa.stack, 1050)])
+        print("----------------------------------------------")
+        msa.clear_state()
