@@ -226,8 +226,8 @@ if __name__ == "__main__":
         for player in msa.player_order:
             if player == 1:
                 if msa.stack == []:
-                    vec1 = get_state_open_version1(1, msa)
-                    b = (GET_STATE_OPEN_VERSION1, vec1, 870, "GET_STATE_OPEN_VERSION1")
+                    vec1 = get_state_version1_open(1, msa)
+                    b = (GET_STATE_VERSION1_OPEN, vec1, 870, "GET_STATE_OPEN_VERSION1")
                     card = msa.random_agent(1)
                     msa.update_state(card, 1)
                     print(f"Stack after player {player} plays: {msa.stack}")
@@ -237,8 +237,47 @@ if __name__ == "__main__":
                           [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), (msa.stack, 1050),
                            b])
                 else:
-                    vec1 = get_state_play_version1(1, msa)
-                    a = (GET_STATE_PLAY_VERSION1, vec1, 800, "GET_STATE_PLAY_VERSION1")
+                    vec1 = get_state_version1_play(1, msa)
+                    a = (GET_STATE_VERSION1_PLAY, vec1, 800, "GET_STATE_PLAY_VERSION1")
+                    t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                          [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), (msa.stack, 1050),
+                           a])
+                    card = msa.random_agent(1)
+                    msa.update_state(card, 1)
+                    print(f"Stack after player {player} plays: {msa.stack}")
+                    print(f"Current winning player: {msa.current_winning_player}")
+
+                    t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                          [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), (msa.stack, 1050),
+                           a])
+
+            else:
+                card = msa.random_agent(player)
+                msa.update_state(card, player)
+                print(f"Stack after player {player} plays: {msa.stack}")
+                print(f"Current winning player: {msa.current_winning_player}")
+                t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                      [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), (msa.stack, 1050)])
+        print("----------------------------------------------")
+        msa.clear_state()
+
+    while p1:
+        for player in msa.player_order:
+            if player == 1:
+                if msa.stack == []:
+                    vec1 = get_state_version1_open(1, msa)
+                    b = (GET_STATE_VERSION1_OPEN, vec1, 870, "GET_STATE_OPEN_VERSION1")
+                    card = msa.random_agent(1)
+                    msa.update_state(card, 1)
+                    print(f"Stack after player {player} plays: {msa.stack}")
+                    print(f"Current winning player: {msa.current_winning_player}")
+                    t.run([t.draw_cards, t.draw_cards, t.draw_cards,  t.draw_properties], [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), b])
+                    t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                          [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), (msa.stack, 1050),
+                           b])
+                else:
+                    vec1 = get_state_version1_play(1, msa)
+                    a = (GET_STATE_VERSION1_PLAY, vec1, 800, "GET_STATE_PLAY_VERSION1")
                     t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
                           [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), (msa.stack, 1050),
                            a])

@@ -87,6 +87,63 @@ class GameStateTarock(TarockBasics):
             else:
                 return 0
 
+    def can_pickup_stack(self, stack, hand):
+
+        can = []
+        if len(stack) == 0:
+            return hand
+
+        karta = stack[0]
+        if len(stack) == 1:
+            for card in self.legal_moves(stack[0], hand):
+                if self.isTarock(karta):
+
+                    #samo tarok je lahko vecji od taroka tko da ce je karta tarok potem v legal kartah lahko poberejo samo karte k so >
+                    if card > karta:
+                        can.append(card)
+
+                else:
+                    #ce ni karta tarok potem mamo 3 situacije: nismo skrti (pobere samo ce card > karta), smo skrti mamo taroke (poberejo vsi taroki), smo skrti nimamo tarokov (nic ne pobere)
+                    if self.is_same_color(karta, card) and card > karta:
+                        can.append(card)
+
+                    if self.isTarock(card):
+                        can.append(card)
+            return can
+
+        druga_karta = stack[1]
+        if len(stack) == 2:
+
+            #najprej preveri kira ze zdej pobere
+            if self.is_same_color(karta, druga_karta):
+                if druga_karta > karta:
+                    win_card = druga_karta
+                else:
+                    win_card = karta
+            else:
+                if self.isTarock(druga_karta):
+                    win_card = druga_karta
+                else:
+                    win_card = karta
+
+            for card in self.legal_moves(stack[0], hand):
+                if self.isTarock(win_card):
+
+                    #samo tarok je lahko vecji od taroka tko da ce je karta tarok potem v legal kartah lahko poberejo samo karte k so >
+                    if card > win_card:
+                        can.append(card)
+
+                else:
+                    #ce ni karta tarok potem mamo 3 situacije: nismo skrti (pobere samo ce card > karta), smo skrti mamo taroke (poberejo vsi taroki), smo skrti nimamo tarokov (nic ne pobere)
+                    if self.is_same_color(karta, card) and card > karta:
+                        can.append(card)
+
+                    if self.isTarock(card):
+                        can.append(card)
+
+            return can
+
+
     def eval_stack(self, stack):
         stack_points = [self.id_to_points[c] for c in stack]
         if stack_points.count(0) == 0:
