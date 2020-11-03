@@ -218,6 +218,10 @@ class GameStateTarock(TarockBasics):
                 else:
                     self.player1_skrt["tarock"] = True
 
+                #ce nista iste barve in nasa ni tarok pomeni tudi da je taroka skrt
+                if not self.isTarock(card):
+                    self.player1_skrt["tarock"] = True
+
             if card in self.player2_cards:
                 if self.isHeart(starting_card):
                     self.player2_skrt["heart"] = True
@@ -230,6 +234,10 @@ class GameStateTarock(TarockBasics):
                 else:
                     self.player2_skrt["tarock"] = True
 
+                # ce nista iste barve in nasa ni tarok pomeni tudi da je taroka skrt
+                if not self.isTarock(card):
+                    self.player1_skrt["tarock"] = True
+
             if card in self.player3_cards:
                 if self.isHeart(starting_card):
                     self.player3_skrt["heart"] = True
@@ -241,6 +249,10 @@ class GameStateTarock(TarockBasics):
                     self.player3_skrt["spade"] = True
                 else:
                     self.player3_skrt["tarock"] = True
+
+                # ce nista iste barve in nasa ni tarok pomeni tudi da je taroka skrt
+                if not self.isTarock(card):
+                    self.player1_skrt["tarock"] = True
 
         #add the pile to discard
         if len(self.stack) == 3:

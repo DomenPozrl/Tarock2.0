@@ -48,12 +48,12 @@ GET_STATE_VERSION3_SOLO_OPEN = [
 		["player2 skrt karo", [0,1]],
 		["player2 skrt pik", [0,1]],
 		["player2 skrt kriz", [0,1]],
-		["player2 taroki", [0,1]],
+		["player2 skrt taroki", [0,1]],
 		["player3 skrt herc", [0,1]],
 		["player3 skrt karo", [0,1]],
 		["player3 skrt pik", [0,1]],
 		["player3 skrt kriz", [0,1]],
-		["player3 taroki", [0,1]],]
+		["player3 skrt taroki", [0,1]],]
 
 GET_STATE_VERSION3_SOLO_SECOND =[
 		["vrednost prve karte", [0,2,3,4,5]],
@@ -70,7 +70,7 @@ GET_STATE_VERSION3_SOLO_SECOND =[
 		["mam poba te barve", [0,1]],
 		["mam platlca te barve", [0,1]],
 		["zadnji player skrt barve", [0,1]],
-		["zadnji player ima se taroke", [0,1]]
+		["zadnji player skrt tarokov", [0,1]]
 	]
 
 GET_STATE_VERSION3_SOLO_THIRD = [
@@ -678,19 +678,19 @@ def get_state_version3_solo_open(current_player_id, game_state: GameStateTarock)
         vector.append(0)
 
     #nizki taroki
-    if len({40, 41, 42, 43, 44, 45, 46, 47}.intersection({game_state.player_hands[current_player_id]})) >= 1:
+    if len({40, 41, 42, 43, 44, 45, 46, 47}.intersection(set(game_state.player_hands[current_player_id]))) >= 1:
         vector.append(1)
     else:
         vector.append(0)
 
     #srednji taroki
-    if len({48, 49, 50, 51, 52, 53}.intersection({game_state.player_hands[current_player_id]})) >= 1:
+    if len({48, 49, 50, 51, 52, 53}.intersection(set(game_state.player_hands[current_player_id]))) >= 1:
         vector.append(1)
     else:
         vector.append(0)
 
     #visoki taroki
-    if len({54, 55, 56, 57, 58, 59, 60, 61}.intersection({game_state.player_hands[current_player_id]})) >= 1:
+    if len({54, 55, 56, 57, 58, 59, 60, 61}.intersection(set(game_state.player_hands[current_player_id]))) >= 1:
         vector.append(1)
     else:
         vector.append(0)
@@ -704,11 +704,11 @@ def get_state_version3_solo_open(current_player_id, game_state: GameStateTarock)
         player2_skrt = game_state.player2_skrt
     if game_state.player_order[1] == game_state.players[2]:
         player2_skrt = game_state.player3_skrt
-    if game_state.player_order[1] == game_state.players[0]:
+    if game_state.player_order[2] == game_state.players[0]:
         player3_skrt = game_state.player1_skrt
-    if game_state.player_order[1] == game_state.players[1]:
+    if game_state.player_order[2] == game_state.players[1]:
         player3_skrt = game_state.player2_skrt
-    if game_state.player_order[1] == game_state.players[2]:
+    if game_state.player_order[2] == game_state.players[2]:
         player3_skrt = game_state.player3_skrt
 
     # player2 skrt herc
@@ -817,42 +817,15 @@ def get_state_version3_solo_second(current_player_id, game_state: GameStateTaroc
         vector.append(0)
 
     #a sm skrt te barve
-    if game_state.player_order[1] == game_state.players[0]:
-        jz_skrt = game_state.player1_skrt
-    if game_state.player_order[1] == game_state.players[1]:
-        jz_skrt = game_state.player2_skrt
-    if game_state.player_order[1] == game_state.players[2]:
-        jz_skrt = game_state.player3_skrt
+    skrt = True
+    for card in game_state.player_hands[current_player_id]:
+        if game_state.is_same_color(card, game_state.stack[0]):
+            skrt = False
 
-    if game_state.isHeart(prva_karta):
-        if jz_skrt["heart"]:
-            vector.append(1)
-        else:
-            vector.append(0)
-
-    if game_state.isDiamond(prva_karta):
-        if jz_skrt["diamond"]:
-            vector.append(1)
-        else:
-            vector.append(0)
-
-    if game_state.isSpade(prva_karta):
-        if jz_skrt["spade"]:
-            vector.append(1)
-        else:
-            vector.append(0)
-
-    if game_state.isClub(prva_karta):
-        if jz_skrt["club"]:
-            vector.append(1)
-        else:
-            vector.append(0)
-
-    if game_state.isTarock(prva_karta):
-        if jz_skrt["tarock"]:
-            vector.append(1)
-        else:
-            vector.append(0)
+    if skrt:
+        vector.append(1)
+    else:
+        vector.append(0)
 
     #a lahko poberem z barvo
     if max(legalne_karte) > prva_karta and game_state.is_same_color(max(legalne_karte), prva_karta) and not game_state.isTarock(max(legalne_karte)):
@@ -867,60 +840,73 @@ def get_state_version3_solo_second(current_player_id, game_state: GameStateTaroc
         vector.append(0)
 
     # nizki taroki
-    if len({40, 41, 42, 43, 44, 45, 46, 47}.intersection({game_state.player_hands[current_player_id]})) >= 1:
+    if len({40, 41, 42, 43, 44, 45, 46, 47}.intersection(set(game_state.player_hands[current_player_id]))) >= 1:
         vector.append(1)
     else:
         vector.append(0)
 
     # srednji taroki
-    if len({48, 49, 50, 51, 52, 53}.intersection({game_state.player_hands[current_player_id]})) >= 1:
+    if len({48, 49, 50, 51, 52, 53}.intersection(set(game_state.player_hands[current_player_id]))) >= 1:
         vector.append(1)
     else:
         vector.append(0)
 
     # visoki taroki
-    if len({54, 55, 56, 57, 58, 59, 60, 61}.intersection({game_state.player_hands[current_player_id]})) >= 1:
+    if len({54, 55, 56, 57, 58, 59, 60, 61}.intersection(set(game_state.player_hands[current_player_id]))) >= 1:
         vector.append(1)
     else:
         vector.append(0)
 
-    #mam kralja te barve
-    if 8 in legalne_karte or 18 in legalne_karte or 28 in legalne_karte or 38 in legalne_karte:
+    # mam kralja te barve
+    if (8 in legalne_karte and game_state.is_same_color(8, prva_karta)) or (
+            18 in legalne_karte and game_state.is_same_color(18, prva_karta)) or (
+            28 in legalne_karte and game_state.is_same_color(28, prva_karta)) or (
+            38 in legalne_karte and game_state.is_same_color(38, prva_karta)):
         vector.append(1)
     else:
         vector.append(0)
 
-    #mam damo te barve
-    if 7 in legalne_karte or 17 in legalne_karte or 27 in legalne_karte or 37 in legalne_karte:
+    # mam damo te barve
+    if (7 in legalne_karte and game_state.is_same_color(7, prva_karta)) or (
+            17 in legalne_karte and game_state.is_same_color(17, prva_karta)) or (
+            27 in legalne_karte and game_state.is_same_color(27, prva_karta)) or (
+            37 in legalne_karte and game_state.is_same_color(37, prva_karta)):
         vector.append(1)
     else:
         vector.append(0)
 
-    #mam kavala te barve
-    if 6 in legalne_karte or 16 in legalne_karte or 26 in legalne_karte or 36 in legalne_karte:
+    # mam kavala te barve
+    if (6 in legalne_karte and game_state.is_same_color(6, prva_karta)) or (
+            16 in legalne_karte and game_state.is_same_color(16, prva_karta)) or (
+            26 in legalne_karte and game_state.is_same_color(26, prva_karta)) or (
+            36 in legalne_karte and game_state.is_same_color(36, prva_karta)):
         vector.append(1)
     else:
         vector.append(0)
 
-    #mam poba te barve
-    if 5 in legalne_karte or 15 in legalne_karte or 25 in legalne_karte or 35 in legalne_karte:
+    # mam poba te barve
+    if (5 in legalne_karte and game_state.is_same_color(5, prva_karta)) or (
+            15 in legalne_karte and game_state.is_same_color(15, prva_karta)) or (
+            25 in legalne_karte and game_state.is_same_color(25, prva_karta)) or (
+            35 in legalne_karte and game_state.is_same_color(35, prva_karta)):
         vector.append(1)
     else:
         vector.append(0)
 
-    #mam platlca te barve
-    if len(set(legalne_karte).intersection(set(game_state.platelci))) >= 1:
+    # mam platlca te barve
+    if len(set(legalne_karte).intersection(set(game_state.platelci))) >= 1 and game_state.is_same_color(
+            list(set(legalne_karte).intersection(set(game_state.platelci)))[0], prva_karta):
         vector.append(1)
     else:
         vector.append(0)
 
     #zadnji player skrt te barve
     zadni_skrt = None
-    if game_state.player_order[1] == game_state.players[0]:
+    if game_state.player_order[2] == game_state.players[0]:
         zadni_skrt = game_state.player1_skrt
-    if game_state.player_order[1] == game_state.players[1]:
+    if game_state.player_order[2] == game_state.players[1]:
         zadni_skrt = game_state.player2_skrt
-    if game_state.player_order[1] == game_state.players[2]:
+    if game_state.player_order[2] == game_state.players[2]:
         zadni_skrt = game_state.player3_skrt
 
     if zadni_skrt[game_state.stack_color]:
@@ -980,42 +966,15 @@ def get_state_version3_solo_third(current_player_id, game_state: GameStateTarock
         vector.append(0)
 
     # a sm skrt te barve
-    if game_state.player_order[1] == game_state.players[0]:
-        jz_skrt = game_state.player1_skrt
-    if game_state.player_order[1] == game_state.players[1]:
-        jz_skrt = game_state.player2_skrt
-    if game_state.player_order[1] == game_state.players[2]:
-        jz_skrt = game_state.player3_skrt
+    skrt = True
+    for card in game_state.player_hands[current_player_id]:
+        if game_state.is_same_color(card, game_state.stack[0]):
+            skrt = False
 
-    if game_state.isHeart(prva_karta):
-        if jz_skrt["heart"]:
-            vector.append(1)
-        else:
-            vector.append(0)
-
-    if game_state.isDiamond(prva_karta):
-        if jz_skrt["diamond"]:
-            vector.append(1)
-        else:
-            vector.append(0)
-
-    if game_state.isSpade(prva_karta):
-        if jz_skrt["spade"]:
-            vector.append(1)
-        else:
-            vector.append(0)
-
-    if game_state.isClub(prva_karta):
-        if jz_skrt["club"]:
-            vector.append(1)
-        else:
-            vector.append(0)
-
-    if game_state.isTarock(prva_karta):
-        if jz_skrt["tarock"]:
-            vector.append(1)
-        else:
-            vector.append(0)
+    if skrt:
+        vector.append(1)
+    else:
+        vector.append(0)
 
     # a lahko poberem z barvo
     if max(legalne_karte) > prva_karta and game_state.is_same_color(max(legalne_karte),
@@ -1032,49 +991,52 @@ def get_state_version3_solo_third(current_player_id, game_state: GameStateTarock
         vector.append(0)
 
     # nizki taroki
-    if len({40, 41, 42, 43, 44, 45, 46, 47}.intersection({game_state.player_hands[current_player_id]})) >= 1:
+    if len({40, 41, 42, 43, 44, 45, 46, 47}.intersection(set(game_state.player_hands[current_player_id]))) >= 1:
         vector.append(1)
     else:
         vector.append(0)
 
     # srednji taroki
-    if len({48, 49, 50, 51, 52, 53}.intersection({game_state.player_hands[current_player_id]})) >= 1:
+    if len({48, 49, 50, 51, 52, 53}.intersection(set(game_state.player_hands[current_player_id]))) >= 1:
         vector.append(1)
     else:
         vector.append(0)
 
     # visoki taroki
-    if len({54, 55, 56, 57, 58, 59, 60, 61}.intersection({game_state.player_hands[current_player_id]})) >= 1:
+    if len({54, 55, 56, 57, 58, 59, 60, 61}.intersection(set(game_state.player_hands[current_player_id]))) >= 1:
         vector.append(1)
     else:
         vector.append(0)
 
     # mam kralja te barve
-    if 8 in legalne_karte or 18 in legalne_karte or 28 in legalne_karte or 38 in legalne_karte:
+    if (8 in legalne_karte and game_state.is_same_color(8, prva_karta)) or (18 in legalne_karte and game_state.is_same_color(18, prva_karta)) or (28 in legalne_karte and game_state.is_same_color(28, prva_karta)) or (38 in legalne_karte and game_state.is_same_color(38, prva_karta)):
         vector.append(1)
     else:
         vector.append(0)
 
     # mam damo te barve
-    if 7 in legalne_karte or 17 in legalne_karte or 27 in legalne_karte or 37 in legalne_karte:
+    if (7 in legalne_karte and game_state.is_same_color(7, prva_karta)) or (17 in legalne_karte and game_state.is_same_color(17, prva_karta)) or (27 in legalne_karte and game_state.is_same_color(27, prva_karta)) or (37 in legalne_karte and game_state.is_same_color(37, prva_karta)):
         vector.append(1)
     else:
         vector.append(0)
 
     # mam kavala te barve
-    if 6 in legalne_karte or 16 in legalne_karte or 26 in legalne_karte or 36 in legalne_karte:
+    if (6 in legalne_karte and game_state.is_same_color(6, prva_karta)) or (
+                16 in legalne_karte and game_state.is_same_color(16, prva_karta)) or (
+                26 in legalne_karte and game_state.is_same_color(26, prva_karta)) or (
+                36 in legalne_karte and game_state.is_same_color(36, prva_karta)):
         vector.append(1)
     else:
         vector.append(0)
 
     # mam poba te barve
-    if 5 in legalne_karte or 15 in legalne_karte or 25 in legalne_karte or 35 in legalne_karte:
+    if (5 in legalne_karte and game_state.is_same_color(5, prva_karta)) or (15 in legalne_karte and game_state.is_same_color(15, prva_karta)) or (25 in legalne_karte and game_state.is_same_color(25, prva_karta)) or (35 in legalne_karte and game_state.is_same_color(35, prva_karta)):
         vector.append(1)
     else:
         vector.append(0)
 
     # mam platlca te barve
-    if len(set(legalne_karte).intersection(set(game_state.platelci))) >= 1:
+    if len(set(legalne_karte).intersection(set(game_state.platelci))) >= 1 and game_state.is_same_color(list(set(legalne_karte).intersection(set(game_state.platelci)))[0], prva_karta):
         vector.append(1)
     else:
         vector.append(0)
@@ -1087,6 +1049,7 @@ def get_state_version3_duo_open(current_player_id, game_state: GameStateTarock):
     vector = get_state_version3_solo_open(current_player_id, game_state)
 
     #razen zadnji atribut, ki ti pove a je tvoj duo partner zadnji na vrsti
+    print(game_state.duo)
     if current_player_id == game_state.duo[0]:
         partner = game_state.duo[1]
     else:
@@ -1116,7 +1079,7 @@ def get_state_version3_duo_second(current_player_id, game_state: GameStateTarock
     return vector
 
 def get_state_version3_duo_third(current_player_id, game_state: GameStateTarock):
-    vector = get_state_version3_duo_third(current_player_id, game_state)
+    vector = get_state_version3_solo_third(current_player_id, game_state)
 
     #pogledam kdo je kolega
     if current_player_id == game_state.duo[0]:

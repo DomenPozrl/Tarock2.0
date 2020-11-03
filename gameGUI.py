@@ -211,13 +211,13 @@ if __name__ == "__main__":
     tb = TarockBasics()
     p1, p2, p3, talon = tb.deal_cards()
 
-    gst = GameStateTarock(p1, p2, p3, [1,2,3], 1, [2,3])
+    gst = GameStateTarock(p1, p2, p3, [1,2,3], 1, [1,3])
     gst.update_state_talon(talon)
     tb.print_hand(talon)
-    msa = MilestoneAgents(p1, p2, p3, [1,2,3], 1, [2,3])
+    msa = MilestoneAgents(p1, p2, p3, [1,2,3], 1, [1,3])
     msa.update_state_talon(talon)
     players = [1,2,3]
-
+    duo = [1,3]
     starting_player = 1
 
 
@@ -263,7 +263,8 @@ if __name__ == "__main__":
         print("----------------------------------------------")
         msa.clear_state()"""
 
-    while p1:
+    #testiranje get state version2
+    """while p1:
         for player in msa.player_order:
             if player == 1:
                     vec1 = get_state_version2(1, msa)
@@ -286,4 +287,112 @@ if __name__ == "__main__":
                 t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
                       [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), (msa.stack, 1050)])
         print("----------------------------------------------")
+        msa.clear_state()"""
+
+
+    #testiranje get state version3
+    while p1:
+        for player in msa.player_order:
+            if player == 1:
+                if msa.stack == []:
+                    if 1 not in duo:
+                        vec1 = get_state_version3_solo_open(1, msa)
+                        b = (GET_STATE_VERSION3_SOLO_OPEN, vec1, 870, "GET_STATE_OPEN_VERSION1")
+                        card = msa.random_agent(1)
+                        msa.update_state(card, 1)
+                        print(f"Stack after player {player} plays: {msa.stack}")
+                        print(f"Current winning player: {msa.current_winning_player}")
+                        t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                              [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), b])
+                        t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                              [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), (msa.stack, 1050),
+                               b])
+                    else:
+                        vec1 = get_state_version3_duo_open(1, msa)
+                        b = (GET_STATE_VERSION3_DUO_OPEN, vec1, 870, "GET_STATE_OPEN_VERSION1")
+                        card = msa.random_agent(1)
+                        msa.update_state(card, 1)
+                        print(f"Stack after player {player} plays: {msa.stack}")
+                        print(f"Current winning player: {msa.current_winning_player}")
+                        t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                              [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), b])
+                        t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                              [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10),
+                               (msa.stack, 1050),
+                               b])
+                elif len(msa.stack) == 1:
+                    if 1 not in duo:
+                        vec1 = get_state_version3_solo_second(1, msa)
+                        a = (GET_STATE_VERSION3_SOLO_SECOND, vec1, 800, "GET_STATE_PLAY_VERSION1")
+                        t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                              [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), (msa.stack, 1050),
+                               a])
+                        card = msa.random_agent(1)
+                        msa.update_state(card, 1)
+                        print(f"Stack after player {player} plays: {msa.stack}")
+                        print(f"Current winning player: {msa.current_winning_player}")
+
+                        t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                              [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), (msa.stack, 1050),
+                               a])
+                    else:
+                        vec1 = get_state_version3_duo_second(1, msa)
+                        a = (GET_STATE_VERSION3_DUO_SECOND, vec1, 800, "GET_STATE_PLAY_VERSION1")
+                        t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                              [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10),
+                               (msa.stack, 1050),
+                               a])
+                        card = msa.random_agent(1)
+                        msa.update_state(card, 1)
+                        print(f"Stack after player {player} plays: {msa.stack}")
+                        print(f"Current winning player: {msa.current_winning_player}")
+
+                        t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                              [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10),
+                               (msa.stack, 1050),
+                               a])
+                else:
+                    if 1 not in duo:
+                        vec1 = get_state_version3_solo_third(1, msa)
+                        a = (GET_STATE_VERSION3_SOLO_THIRD, vec1, 800, "GET_STATE_PLAY_VERSION1")
+                        t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                              [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), (msa.stack, 1050),
+                               a])
+                        card = msa.random_agent(1)
+                        msa.update_state(card, 1)
+                        print(f"Stack after player {player} plays: {msa.stack}")
+                        print(f"Current winning player: {msa.current_winning_player}")
+
+                        t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                              [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), (msa.stack, 1050),
+                               a])
+                    else:
+                        vec1 = get_state_version3_duo_third(1, msa)
+                        a = (GET_STATE_VERSION3_DUO_THIRD, vec1, 800, "GET_STATE_PLAY_VERSION1")
+                        t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                              [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10),
+                               (msa.stack, 1050),
+                               a])
+                        card = msa.random_agent(1)
+                        msa.update_state(card, 1)
+                        print(f"Stack after player {player} plays: {msa.stack}")
+                        print(f"Current winning player: {msa.current_winning_player}")
+
+                        t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                              [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10),
+                               (msa.stack, 1050),
+                               a])
+
+            else:
+                card = msa.random_agent(player)
+                msa.update_state(card, player)
+                print(f"Stack after player {player} plays: {msa.stack}")
+                print(f"Current winning player: {msa.current_winning_player}")
+                t.run([t.draw_cards, t.draw_cards, t.draw_cards, t.draw_cards, t.draw_properties],
+                      [(list(sorted(p1)), 520), (list(sorted(p2)), 260), (list(sorted(p3)), 10), (msa.stack, 1050)])
+        print("----------------------------------------------")
         msa.clear_state()
+
+    print(msa.player1_skrt)
+    print(msa.player2_skrt)
+    print(msa.player3_skrt)
