@@ -12,9 +12,6 @@ import random
 #jz bi za odpret definiru razlicne akcije pa za igrt razlicne akcije
 
 
-#recimo za odpret bi mel kral, dama, caval, pob, platlc * 4 plus nizek, srednji, visok tarok
-
-
 def play_king(hand):
     kralji = {8, 18, 28, 38}
     inter = list(kralji.intersection(set(hand)))
@@ -125,6 +122,133 @@ def get_actions_version2(vector, hand, game_state: GameStateTarock):
             return par, conf, action_names
         else:
             continue
+
+
+#recimo za odpret bi mel kral, dama, caval, pob, platlc * 4 plus nizek, srednji, visok tarok
+def get_actions_version3_open(vector, hand, game_state: GameStateTarock):
+    action_names = ["herc kral", "herc dama", "herc kaval", "herc pob", "herc platlc", "karo kral", "karo dama", "karo kavla", "karo pob", "karo platlc", "pik kral", "pik dama", "pik kaval", "pik pob", "pik platlc", "kriz kral", "kriz dama", "kriz kaval", "kriz pob", "kriz platlc", "nizek tarok", "srednji tarok", "visok tarok"]
+
+    #herci
+    conf1 = True if 8 in hand else False
+    card1 = 8 if conf1 else None
+    conf2 = True if 7 in hand else False
+    card2 = 7 if conf2 else None
+    conf3 = True if 6 in hand else False
+    card3 = 6 if conf3 else None
+    conf4 = True if 5 in hand else False
+    card4 = 5 if conf4 else None
+    conf5 = True if len(set(game_state.herc_platelci).intersection(set(hand))) >= 1 else False
+    card5 = list(set(game_state.herc_platelci).intersection(set(hand)))[0] if conf5 else None
+
+    #kare
+    conf11 = True if 18 in hand else False
+    card11 = 18 if conf11 else None
+    conf12 = True if 17 in hand else False
+    card12 = 17 if conf12 else None
+    conf13 = True if 16 in hand else False
+    card13 = 16 if conf13 else None
+    conf14 = True if 15 in hand else False
+    card14 = 15 if conf14 else None
+    conf15 = True if len(set(game_state.karo_platelci).intersection(set(hand))) >= 1 else False
+    card15 = list(set(game_state.karo_platelci).intersection(set(hand)))[0] if conf15 else None
+
+    #piki
+    conf21 = True if 28 in hand else False
+    card21 = 28 if conf21 else None
+    conf22 = True if 27 in hand else False
+    card22 = 27 if conf22 else None
+    conf23 = True if 26 in hand else False
+    card23 = 26 if conf23 else None
+    conf24 = True if 25 in hand else False
+    card24 = 25 if conf24 else None
+    conf25 = True if len(set(game_state.pik_platelci).intersection(set(hand))) >= 1 else False
+    card25 = list(set(game_state.pik_platelci).intersection(set(hand)))[0] if conf25 else None
+
+    #krizi
+    conf31 = True if 38 in hand else False
+    card31 = 38 if conf31 else None
+    conf32 = True if 37 in hand else False
+    card32 = 37 if conf32 else None
+    conf33 = True if 36 in hand else False
+    card33 = 36 if conf33 else None
+    conf34 = True if 35 in hand else False
+    card34 = 35 if conf34 else None
+    conf35 = True if len(set(game_state.kriz_platelci).intersection(set(hand))) >= 1 else False
+    card35 = list(set(game_state.kriz_platelci).intersection(set(hand)))[0] if conf35 else None
+
+    # nizki taroki
+    if len({40, 41, 42, 43, 44, 45, 46, 47}.intersection(set(hand))) >= 1:
+        conf41 = True
+    else:
+        conf41 = False
+
+    # srednji taroki
+    if len({48, 49, 50, 51, 52, 53}.intersection(set(hand))) >= 1:
+        conf42 = True
+    else:
+        conf42 = False
+
+    # visoki taroki
+    if len({54, 55, 56, 57, 58, 59, 60, 61}.intersection(set(hand))) >= 1:
+        conf43 = True
+    else:
+        conf43 = False
+
+    card41 = list({40, 41, 42, 43, 44, 45, 46, 47}.intersection(set(hand)))[0] if conf41 else None
+    card42 = list({48, 49, 50, 51, 52, 53}.intersection(set(hand)))[0] if conf41 else None
+    card43 = list({54, 55, 56, 57, 58, 59, 60, 61}.intersection(set(hand)))[0] if conf41 else None
+
+    conf = [conf1, conf2, conf3, conf4, conf5,
+            conf11, conf12, conf13, conf14, conf15,
+            conf21, conf22, conf23, conf24, conf25,
+            conf31, conf32, conf33, conf34, conf35,
+            conf41, conf42, conf42]
+
+    card = [card1, card2, card3, card4, card5,
+            card11, card12, card13, card14, card15,
+            card21, card22, card23, card24, card25,
+            card31, card32, card33, card34, card35,
+            card41, card42, card42]
+
+    pari = reversed(sorted(list(zip(vector, conf, card, action_names))))
+
+    for par in pari:
+        if par[1]:
+            return par, conf, action_names
+        else:
+            continue
+
+#okej dejmo sm torej pass, poberi, stegni
+def get_actions_version3_play(vector, hand, game_state: GameStateTarock):
+
+    #pass naj je najnizja karta
+    #poberi je najnizja k pobere
+    #stegni se je najvisja k pobere
+
+    action_names = ["pass", "poberi", "stegni se"]
+
+    can = game_state.can_pickup_stack(game_state.stack, hand)
+
+    conf1 = True
+    conf2 = True if len(can) >= 1 else False
+    conf3 = True if len(can) > 1 else False
+
+    card1 = list(sorted(game_state.legal_moves(game_state.stack[0], hand)))[0]
+    card2 = list(sorted(can))[0] if conf2 else None
+    card3 = list(sorted(can))[-1] if conf3 else None
+
+    conf = [conf1, conf2, conf3]
+    card = [card1, card2, card3]
+
+    pari = reversed(sorted(list(zip(vector, conf, card, action_names))))
+
+    for par in pari:
+        if par[1]:
+            return par, conf, action_names
+        else:
+            continue
+
+
 
 if __name__ == "__main__":
     tb = TarockBasics()

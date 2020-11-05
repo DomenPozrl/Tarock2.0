@@ -194,6 +194,11 @@ class TarockBasics:
         self.cavals = [6, 16, 26, 36]
         self.jacks = [5, 15, 25, 35]
         self.platelci = [1, 2, 3, 4, 11, 12, 13, 14, 21, 22, 23, 24, 31, 32, 33, 34]
+        self.herc_platelci = [1,2,3,4]
+        self.karo_platelci = [11,12,13,14]
+        self.pik_platelci = [21, 22, 23, 24]
+        self.kriz_platelci = [31,32,33,34]
+
         self.tarocks = list(range(40, 62))
 
     def isHeart(self, karta_id):
