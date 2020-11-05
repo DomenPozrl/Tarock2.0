@@ -11,12 +11,17 @@ import random
 #tko da rabs razlicne akcije
 #jz bi za odpret definiru razlicne akcije pa za igrt razlicne akcije
 
+ACTIONS_VERSION1_OPEN = ["play king", "play queen", "play knight/jack", "play platlc", "play tarok"]
+ACTIONS_VERSION1_PLAY = ["win current stack", "pass current stack"]
+ACTIONS_VERSION2 = [4, 3, 2, 1, 5, 6, 7, 8, 14, 13, 12, 11, 15, 16, 17, 18, 21, 22, 23, 24, 25, 26, 27, 28, 31, 32, 33, 34, 35, 36, 37, 38, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61]
+ACTIONS_VERSION3_OPEN = ["herc kral", "herc dama", "herc kaval", "herc pob", "herc platlc", "karo kral", "karo dama", "karo kavla", "karo pob", "karo platlc", "pik kral", "pik dama", "pik kaval", "pik pob", "pik platlc", "kriz kral", "kriz dama", "kriz kaval", "kriz pob", "kriz platlc", "nizek tarok", "srednji tarok", "visok tarok"]
+ACTIONS_VERSION3_PLAY = ["pass", "poberi", "stegni se"]
 
 def play_king(hand):
     kralji = {8, 18, 28, 38}
     inter = list(kralji.intersection(set(hand)))
     if inter:
-        return True, random.choce(inter)
+        return True, random.choice(inter)
     else:
         return False, None
 
@@ -24,7 +29,7 @@ def play_queen(hand):
     dame = {7, 17, 27, 37}
     inter = list(dame.intersection(set(hand)))
     if inter:
-        return True, random.choce(inter)
+        return True, random.choice(inter)
     else:
         return False, None
 
@@ -32,29 +37,28 @@ def play_knight_jack(hand):
     knights_jacks = {6, 16, 26, 36, 5, 15, 25, 35}
     inter = list(knights_jacks.intersection(hand))
     if inter:
-        return True, random.choce(inter)
+        return True, random.choice(inter)
     else:
         return False, None
 
 def play_platlc(hand):
     platelci = [1, 2, 3, 4, 11, 12, 13, 14, 21, 22, 23, 24, 31, 32, 33, 34]
-    inter = list(platelci.intersection(hand))
+    inter = list(set(platelci).intersection(hand))
     if inter:
-        return True, random.choce(inter)
+        return True, random.choice(inter)
     else:
         return False, None
 
 def play_tarock(hand):
     tarocks = list(range(40, 62))
-    inter = list(tarocks.intersection(hand))
+    inter = list(set(tarocks).intersection(hand))
     if inter:
-        return True, random.choce(inter)
+        return True, random.choice(inter)
     else:
         return False, None
 
 def get_actions_version1_open(vector, hand, game_state: GameStateTarock):
     action_names = ["play king", "play queen", "play knight/jack", "play platlc", "play tarok"]
-
     conf1, king = play_king(hand)
     conf2, queen = play_queen(hand)
     conf3, kjack = play_knight_jack(hand)
@@ -68,7 +72,7 @@ def get_actions_version1_open(vector, hand, game_state: GameStateTarock):
 
     for par in pari:
         if par[1]:
-            return par, conf, action_names
+            return par, conf
         else:
             continue
 
@@ -102,9 +106,7 @@ def get_actions_version1_play(vector, hand, game_state: GameStateTarock):
 
     for par in pari:
         if par[1]:
-            return par, conf, action_names
-        else:
-            continue
+            return par, conf
 
 def get_actions_version2(vector, hand, game_state: GameStateTarock):
     action_names = list(game_state.id_to_cards.keys())
@@ -119,10 +121,7 @@ def get_actions_version2(vector, hand, game_state: GameStateTarock):
 
     for par in pari:
         if par[1]:
-            return par, conf, action_names
-        else:
-            continue
-
+            return par, conf
 
 #recimo za odpret bi mel kral, dama, caval, pob, platlc * 4 plus nizek, srednji, visok tarok
 def get_actions_version3_open(vector, hand, game_state: GameStateTarock):
@@ -195,29 +194,30 @@ def get_actions_version3_open(vector, hand, game_state: GameStateTarock):
         conf43 = False
 
     card41 = list({40, 41, 42, 43, 44, 45, 46, 47}.intersection(set(hand)))[0] if conf41 else None
-    card42 = list({48, 49, 50, 51, 52, 53}.intersection(set(hand)))[0] if conf41 else None
-    card43 = list({54, 55, 56, 57, 58, 59, 60, 61}.intersection(set(hand)))[0] if conf41 else None
+    card42 = list({48, 49, 50, 51, 52, 53}.intersection(set(hand)))[0] if conf42 else None
+    card43 = list({54, 55, 56, 57, 58, 59, 60, 61}.intersection(set(hand)))[0] if conf43 else None
 
     conf = [conf1, conf2, conf3, conf4, conf5,
             conf11, conf12, conf13, conf14, conf15,
             conf21, conf22, conf23, conf24, conf25,
             conf31, conf32, conf33, conf34, conf35,
-            conf41, conf42, conf42]
+            conf41, conf42, conf43]
 
     card = [card1, card2, card3, card4, card5,
             card11, card12, card13, card14, card15,
             card21, card22, card23, card24, card25,
             card31, card32, card33, card34, card35,
-            card41, card42, card42]
+            card41, card42, card43]
 
     pari = reversed(sorted(list(zip(vector, conf, card, action_names))))
 
+
     for par in pari:
         if par[1]:
-            return par, conf, action_names
-        else:
-            continue
-
+            return par, conf
+    print(conf)
+    print(hand)
+    print("B")
 #okej dejmo sm torej pass, poberi, stegni
 def get_actions_version3_play(vector, hand, game_state: GameStateTarock):
 
@@ -244,34 +244,74 @@ def get_actions_version3_play(vector, hand, game_state: GameStateTarock):
 
     for par in pari:
         if par[1]:
-            return par, conf, action_names
-        else:
-            continue
-
-
+            return par, conf
 
 if __name__ == "__main__":
-    tb = TarockBasics()
+    cnt = 0
+    while cnt < 100000:
+        print(cnt/100000)
+        tb = TarockBasics()
 
-    p1, p2, p3, talon = tb.deal_cards()
+        p1, p2, p3, talon = tb.deal_cards()
 
-    c = 0
-    l = []
-    while c < 100:
         gst = GameStateTarock(p1, p2, p3, [1,2,3], 1, [2,3])
 
-        l.append(get_actions_version2(1, 2, gst))
-        c += 1
+        #test version1
+        """while p1:
 
-    model = True
-    for a, b in zip(l, l[1:]):
-        if a != b:
-            model = False
-    print(model)
+            hand1 = gst.player_hands[gst.player_order[0]]
+            hand2 = gst.player_hands[gst.player_order[1]]
+            hand3 = gst.player_hands[gst.player_order[2]]
 
+            vector1 = [random.uniform(0, 1) for x in range(len(ACTIONS_VERSION1_OPEN))]
+            vector2 = [random.uniform(0, 1) for x in range(len(ACTIONS_VERSION1_PLAY))]
+            vector3 = [random.uniform(0, 1) for x in range(len(ACTIONS_VERSION1_PLAY))]
 
+            a, conf1 = get_actions_version1_open(vector1, hand1, gst)
+            gst.update_state(a[2], gst.player_order[0])
+            b, conf2 = get_actions_version1_play(vector2, hand2, gst)
+            gst.update_state(b[2], gst.player_order[1])
+            c, conf3 = get_actions_version1_play(vector3, hand3, gst)
+            gst.update_state(c[2], gst.player_order[2])
+            gst.clear_state()"""
 
+        #test version2
+        """while p1:
+            hand1 = gst.player_hands[gst.player_order[0]]
+            hand2 = gst.player_hands[gst.player_order[1]]
+            hand3 = gst.player_hands[gst.player_order[2]]
 
+            vector1 = [random.uniform(0, 1) for x in range(len(ACTIONS_VERSION2))]
+            vector2 = [random.uniform(0, 1) for x in range(len(ACTIONS_VERSION2))]
+            vector3 = [random.uniform(0, 1) for x in range(len(ACTIONS_VERSION2))]
+
+            a, conf1 = get_actions_version2(vector1, hand1, gst)
+            gst.update_state(a[2], gst.player_order[0])
+            b, conf2 = get_actions_version2(vector2, hand2, gst)
+            gst.update_state(b[2], gst.player_order[1])
+            c, conf3 = get_actions_version2(vector3, hand3, gst)
+            gst.update_state(c[2], gst.player_order[2])
+            gst.clear_state()"""
+
+        # test version3
+        while p1:
+            hand1 = gst.player_hands[gst.player_order[0]]
+            hand2 = gst.player_hands[gst.player_order[1]]
+            hand3 = gst.player_hands[gst.player_order[2]]
+
+            vector1 = [random.uniform(0, 1) for x in range(len(ACTIONS_VERSION3_OPEN))]
+            vector2 = [random.uniform(0, 1) for x in range(len(ACTIONS_VERSION3_PLAY))]
+            vector3 = [random.uniform(0, 1) for x in range(len(ACTIONS_VERSION3_PLAY))]
+
+            a, conf1 = get_actions_version3_open(vector1, hand1, gst)
+            gst.update_state(a[2], gst.player_order[0])
+            b, conf2 = get_actions_version3_play(vector2, hand2, gst)
+            gst.update_state(b[2], gst.player_order[1])
+            c, conf3 = get_actions_version3_play(vector3, hand3, gst)
+            gst.update_state(c[2], gst.player_order[2])
+            gst.clear_state()
+
+        cnt += 1
 
 
 

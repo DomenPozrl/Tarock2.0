@@ -256,7 +256,7 @@ class TarockBasics:
                 print("    " + self.id_to_cards[card])
 
     def print_hand(self, hand):
-        s = "| "
+        s = "|"
         for card in hand:
-            s += self.id_to_cards[card] + " (" + str(card) + ")" + " |"
+            s += self.id_to_cards[card] + "(" + str(card) + ")" + "|"
         print(s)
