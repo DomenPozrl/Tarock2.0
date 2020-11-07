@@ -272,7 +272,7 @@ def get_state_version1_play(current_player_id, game_state: GameStateTarock):
         else:
             state.append(0)
 
-    return state
+    return tuple(state)
 
 def get_state_version1_open(current_player_id, game_state: GameStateTarock):
     """
@@ -423,7 +423,7 @@ def get_state_version1_open(current_player_id, game_state: GameStateTarock):
         else:
             state.append(0)
     #print("skrt taroka player2 in player3", state)
-    return state
+    return tuple(state)
 
 def get_state_version2(current_player_id, game_state: GameStateTarock):
     #this state is a bit different
@@ -586,7 +586,7 @@ def get_state_version2(current_player_id, game_state: GameStateTarock):
         else:
             vector.append(0)
 
-    return vector
+    return tuple(vector)
 
 def get_state_version3_solo_open(current_player_id, game_state: GameStateTarock):
     """
@@ -772,7 +772,7 @@ def get_state_version3_solo_open(current_player_id, game_state: GameStateTarock)
     else:
         vector.append(0)
 
-    return vector
+    return tuple(vector)
 
 def get_state_version3_solo_second(current_player_id, game_state: GameStateTarock):
     """
@@ -828,6 +828,8 @@ def get_state_version3_solo_second(current_player_id, game_state: GameStateTaroc
         vector.append(0)
 
     #a lahko poberem z barvo
+    #print(game_state.player_hands[current_player_id])
+    #print(legalne_karte)
     if max(legalne_karte) > prva_karta and game_state.is_same_color(max(legalne_karte), prva_karta) and not game_state.isTarock(max(legalne_karte)):
         vector.append(1)
     else:
@@ -920,7 +922,7 @@ def get_state_version3_solo_second(current_player_id, game_state: GameStateTaroc
     else:
         vector.append(0)
 
-    return vector
+    return tuple(vector)
 
 def get_state_version3_solo_third(current_player_id, game_state: GameStateTarock): 
     """
@@ -1041,15 +1043,14 @@ def get_state_version3_solo_third(current_player_id, game_state: GameStateTarock
     else:
         vector.append(0)
 
-    return vector
+    return tuple(vector)
 
 def get_state_version3_duo_open(current_player_id, game_state: GameStateTarock):
 
     #vse isto kot solo open
-    vector = get_state_version3_solo_open(current_player_id, game_state)
+    vector = list(get_state_version3_solo_open(current_player_id, game_state))
 
     #razen zadnji atribut, ki ti pove a je tvoj duo partner zadnji na vrsti
-    print(game_state.duo)
     if current_player_id == game_state.duo[0]:
         partner = game_state.duo[1]
     else:
@@ -1060,10 +1061,10 @@ def get_state_version3_duo_open(current_player_id, game_state: GameStateTarock):
     else:
         vector.append(0)
 
-    return vector
+    return tuple(vector)
 
 def get_state_version3_duo_second(current_player_id, game_state: GameStateTarock):
-    vector = get_state_version3_solo_second(current_player_id, game_state)
+    vector = list(get_state_version3_solo_second(current_player_id, game_state))
 
     # razen zadnji atribut, ki ti pove a je tvoj duo partner naslednji ergo zadnji
     if current_player_id == game_state.duo[0]:
@@ -1076,10 +1077,10 @@ def get_state_version3_duo_second(current_player_id, game_state: GameStateTarock
     else:
         vector.append(0)
 
-    return vector
+    return tuple(vector)
 
 def get_state_version3_duo_third(current_player_id, game_state: GameStateTarock):
-    vector = get_state_version3_solo_third(current_player_id, game_state)
+    vector = list(get_state_version3_solo_third(current_player_id, game_state))
 
     #pogledam kdo je kolega
     if current_player_id == game_state.duo[0]:
@@ -1099,7 +1100,7 @@ def get_state_version3_duo_third(current_player_id, game_state: GameStateTarock)
         else:
             vector.append(0)
 
-    return vector
+    return tuple(vector)
 
 if __name__ == "__main__":
 

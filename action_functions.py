@@ -67,21 +67,13 @@ def get_actions_version1_open(vector, hand, game_state: GameStateTarock):
 
     conf = [conf1, conf2, conf3, conf4, conf5]
     card = [king, queen, kjack, platlc, tarock]
-
-    pari = reversed(sorted(list(zip(vector, conf, card, action_names))))
-
-    for par in pari:
-        if par[1]:
-            return par, conf
-        else:
-            continue
+    return list(zip(vector, conf, card, action_names))
 
 def get_actions_version1_play(vector, hand, game_state: GameStateTarock):
     #win current stack
     #pass current stack
 
     action_names = ["win current stack", "pass current stack"]
-
     can_pickup_set = set(game_state.can_pickup_stack(game_state.stack, hand))
     legal_cards_set = set(game_state.legal_moves(game_state.stack[0], hand))
     can_pass_set = legal_cards_set.difference(can_pickup_set)
@@ -102,11 +94,7 @@ def get_actions_version1_play(vector, hand, game_state: GameStateTarock):
     conf = [can_pickup, can_pass]
     card = [pickup, pass_card]
 
-    pari = reversed(sorted(list(zip(vector, conf, card, action_names))))
-
-    for par in pari:
-        if par[1]:
-            return par, conf
+    return list(zip(vector, conf, card, action_names))
 
 def get_actions_version2(vector, hand, game_state: GameStateTarock):
     action_names = list(game_state.id_to_cards.keys())
@@ -117,11 +105,7 @@ def get_actions_version2(vector, hand, game_state: GameStateTarock):
 
     card = action_names
 
-    pari = reversed(sorted(list(zip(vector, conf, card, action_names))))
-
-    for par in pari:
-        if par[1]:
-            return par, conf
+    return list(zip(vector, conf, card, action_names))
 
 #recimo za odpret bi mel kral, dama, caval, pob, platlc * 4 plus nizek, srednji, visok tarok
 def get_actions_version3_open(vector, hand, game_state: GameStateTarock):
@@ -209,15 +193,8 @@ def get_actions_version3_open(vector, hand, game_state: GameStateTarock):
             card31, card32, card33, card34, card35,
             card41, card42, card43]
 
-    pari = reversed(sorted(list(zip(vector, conf, card, action_names))))
+    return list(zip(vector, conf, card, action_names))
 
-
-    for par in pari:
-        if par[1]:
-            return par, conf
-    print(conf)
-    print(hand)
-    print("B")
 #okej dejmo sm torej pass, poberi, stegni
 def get_actions_version3_play(vector, hand, game_state: GameStateTarock):
 
@@ -240,11 +217,7 @@ def get_actions_version3_play(vector, hand, game_state: GameStateTarock):
     conf = [conf1, conf2, conf3]
     card = [card1, card2, card3]
 
-    pari = reversed(sorted(list(zip(vector, conf, card, action_names))))
-
-    for par in pari:
-        if par[1]:
-            return par, conf
+    return list(zip(vector, conf, card, action_names))
 
 if __name__ == "__main__":
     cnt = 0
