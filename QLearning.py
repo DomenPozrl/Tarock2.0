@@ -10,6 +10,14 @@ class QLearning:
 
 
 
+    def choose_action_testing(self, pairs):
+        action_names = [name for _, _, _, name in pairs]
+        num_of_possible_actions = sum([1 for par in pairs if par[1]])
+        possible = [par for par in pairs if par[1]]
+        pairs = reversed(sorted(pairs))
+        for par in pairs:
+            if par[1]:
+                return par[2], action_names.index(par[3]), num_of_possible_actions / len(action_names)
 
     def choose_action(self, pairs):
         """

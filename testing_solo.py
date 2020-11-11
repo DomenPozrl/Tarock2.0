@@ -1,8 +1,9 @@
-from QLearning import *
+from TarockBasics import *
 from GameStateTarock import *
+from MilestoneAgents import *
 from get_states_GST_functions import *
+from QLearning import *
 from action_functions import *
-
 
 #Q tables
 solo_first = None
@@ -339,195 +340,230 @@ def set_action_vars_version3():
     duo_third_action = solo_third_action
     duo_third_action_len = solo_third_action_len
 
+
 if __name__ == "__main__":
 
+    player1 = "3_3"
+    player2 = "LB"
+    player3 = "LB"
+
+    player1_id = 1
+    player2_id = 2
+    player3_id = 3
+
+    if player1 == "1_1":
+        load_table_function_vars_version1("q_tables/solo_first_1_1.pickle", "q_tables/solo_second_1_1.pickle")
+        set_action_vars_version1()
+    if player1 == "2_2":
+        load_table_function_vars_version2("q_tables/solo_first_2_2.pickle")
+        set_action_vars_version2()
+    if player1 == "3_3":
+        load_table_function_vars_version3("q_tables/solo_first_3_3.pickle", "q_tables/solo_second_3_3.pickle", "q_tables/solo_third_3_3.pickle", "q_tables/duo_first_3_3.pickle", "q_tables/duo_second_3_3.pickle", "q_tables/duo_third_3_3.pickle")
+        set_action_vars_version3()
+
     qlearning = QLearning(1, 0.1, 0.2)
-    num_games = 1000000
     count = 0
+    number_of_games = 10000
+    file = open(player1 + "_" + player2 + "_" + player3, "w")
 
+    ss = ""
+    while count < number_of_games:
 
-    #cant combine action vars1 and vars3 with table vars2
-    #that is because q table for version2 has only 1 table but the previously mentioned actions have two different size vectors
-    #so this is a no go
-
-    set_table_function_vars_version2()
-    set_action_vars_version2()
-    #print(solo_first, solo_second, solo_third, duo_first, duo_second, duo_third)
-    while count < num_games:
-        print(count/num_games)
-
-        #deal cards
         tb = TarockBasics()
+
         p1, p2, p3, talon = tb.deal_cards()
+        ma = MilestoneAgents(p1, p2, p3, [1,2,3], 1, [2, 3])
 
-        #init the game state
-        gst = GameStateTarock(p1, p2, p3, [1,2,3], 1, [2,3])
-
-        #update the state according to talon cards
-        gst.update_state_talon(talon)
+        points_dict = {1: 0, 2: 0, 3:0}
 
 
-        #play while there are still cards in p1
+        s = "--------------------------\n"
+        s += str(p1) + "\n"
+        s += str(p2) + "\n"
+        s += str(p3) + "\n"
+        s += str(talon) + "\n"
         while p1:
 
-            first = gst.player_order[0]
-            second = gst.player_order[1]
-            third = gst.player_order[2]
+            first = ma.player_order[0]
+            second = ma.player_order[1]
+            third = ma.player_order[2]
 
+            if first == player1_id:
 
-            #first player plays
-            if first not in gst.duo:
+                # get state
+                state1 = solo_first_fun(first, ma)
 
-                #get state
-                state1 = solo_first_fun(first, gst)
-
-                #current vector of q table for this state
+                # current vector of q table for this state
                 if state1 in solo_first:
                     vector = solo_first[state1]
                 else:
                     vector = [0 for i in range(solo_first_action_len)]
                     solo_first[state1] = vector
 
-                #get card
-                rez = solo_first_action(vector, gst.player_hands[first], gst)
-                card, action_index1, num_possible_actions1 = qlearning.choose_action(rez)
-                gst.update_state(card, first)
-            else:
-                state1 = duo_first_fun(first, gst)
-
-                # current vector of q table for this state
-                if state1 in duo_first:
-                    vector = duo_first[state1]
-                else:
-                    vector = [0 for i in range(duo_first_action_len)]
-                    duo_first[state1] = vector
-
                 # get card
-                rez = duo_first_action(vector, gst.player_hands[first], gst)
-                card, action_index1, num_possible_actions1 = qlearning.choose_action(rez)
-                gst.update_state(card, first)
+                rez = solo_first_action(vector, ma.player_hands[first], ma)
+                card, action_index1, num_possible_actions1 = qlearning.choose_action_testing(rez)
+                ma.update_state(card, first)
 
-            # second player plays
-            if second not in gst.duo:
+                if second == player2_id:
+                    if player2 == "random":
+                        card = ma.random_agent(second)
+                    elif player2 == "LW":
+                        card = ma.locally_worst_agent(second)
+                    else:
+                        card = ma.locally_best_agent(second)
+                    ma.update_state(card, second)
+                else:
+                    if player3 == "random":
+                        card = ma.random_agent(second)
+                    elif player3 == "LW":
+                        card = ma.locally_worst_agent(second)
+                    else:
+                        card = ma.locally_best_agent(second)
+                    ma.update_state(card, second)
 
-                state2 = solo_second_fun(second, gst)
+                if third == player3_id:
+                    if player3 == "random":
+                        card = ma.random_agent(third)
+                    elif player3 == "LW":
+                        card = ma.locally_worst_agent(third)
+                    else:
+                        card = ma.locally_best_agent(third)
+                    ma.update_state(card, third)
+                else:
+                    if player2 == "random":
+                        card = ma.random_agent(third)
+                    elif player2 == "LW":
+                        card = ma.locally_worst_agent(third)
+                    else:
+                        card = ma.locally_best_agent(third)
+                    ma.update_state(card, third)
+
+            elif second == player1_id:
+
+                if first == player2_id:
+                    if player2 == "random":
+                        card = ma.random_agent(first)
+                    elif player2 == "LW":
+                        card = ma.locally_worst_agent(first)
+                    else:
+                        card = ma.locally_best_agent(first)
+                    ma.update_state(card, first)
+                else:
+                    if player3 == "random":
+                        card = ma.random_agent(first)
+                    elif player3 == "LW":
+                        card = ma.locally_worst_agent(first)
+                    else:
+                        card = ma.locally_best_agent(first)
+                    ma.update_state(card, first)
+
+                # get state
+                state1 = solo_second_fun(second, ma)
 
                 # current vector of q table for this state
-                if state2 in solo_second:
-                    vector = solo_second[state2]
+                if state1 in solo_second:
+                    vector = solo_second[state1]
                 else:
                     vector = [0 for i in range(solo_second_action_len)]
-                    solo_second[state2] = vector
+                    solo_second[state1] = vector
 
                 # get card
-                rez = solo_second_action(vector, gst.player_hands[second], gst)
-                card, action_index2, num_possible_actions2 = qlearning.choose_action(rez)
-                gst.update_state(card, second)
+                rez = solo_second_action(vector, ma.player_hands[second], ma)
+                card, action_index1, num_possible_actions1 = qlearning.choose_action_testing(rez)
+                ma.update_state(card, second)
+
+
+
+                if third == player3_id:
+                    if player3 == "random":
+                        card = ma.random_agent(third)
+                    elif player3 == "LW":
+                        card = ma.locally_worst_agent(third)
+                    else:
+                        card = ma.locally_best_agent(third)
+                    ma.update_state(card, third)
+                else:
+                    if player2 == "random":
+                        card = ma.random_agent(third)
+                    elif player2 == "LW":
+                        card = ma.locally_worst_agent(third)
+                    else:
+                        card = ma.locally_best_agent(third)
+                    ma.update_state(card, third)
 
             else:
-                state2 = duo_second_fun(second, gst)
 
-                # current vector of q table for this state
-                if state2 in duo_second:
-                    vector = duo_second[state2]
+                if first == player2_id:
+                    if player2 == "random":
+                        card = ma.random_agent(first)
+                    elif player2 == "LW":
+                        card = ma.locally_worst_agent(first)
+                    else:
+                        card = ma.locally_best_agent(first)
+                    ma.update_state(card, first)
                 else:
-                    vector = [0 for i in range(duo_second_action_len)]
-                    duo_second[state2] = vector
+                    if player3 == "random":
+                        card = ma.random_agent(first)
+                    elif player3 == "LW":
+                        card = ma.locally_worst_agent(first)
+                    else:
+                        card = ma.locally_best_agent(first)
+                    ma.update_state(card, first)
 
-                # get card
-                # print(vector, gst.player_hands[second])
-                rez = duo_second_action(vector, gst.player_hands[second], gst)
-                card, action_index2, num_possible_actions2 = qlearning.choose_action(rez)
-                gst.update_state(card, second)
+                if second == player2_id:
+                    if player2 == "random":
+                        card = ma.random_agent(second)
+                    elif player2 == "LW":
+                        card = ma.locally_worst_agent(second)
+                    else:
+                        card = ma.locally_best_agent(second)
+                    ma.update_state(card, second)
+                else:
+                    if player3 == "random":
+                        card = ma.random_agent(second)
+                    elif player3 == "LW":
+                        card = ma.locally_worst_agent(second)
+                    else:
+                        card = ma.locally_best_agent(second)
+                    ma.update_state(card, second)
 
-            # third player plays
-            if third not in gst.duo:
-                state3 = solo_third_fun(third, gst)
+                # get state
+                state1 = solo_third_fun(third, ma)
 
                 # current vector of q table for this state
-                if state3 in solo_third:
-                    vector = solo_third[state3]
+                if state1 in solo_third:
+                    vector = solo_third[state1]
                 else:
                     vector = [0 for i in range(solo_third_action_len)]
-                    solo_third[state3] = vector
+                    solo_third[state1] = vector
 
                 # get card
-                rez = solo_third_action(vector, gst.player_hands[third], gst)
-                card, action_index3, num_possible_actions3 = qlearning.choose_action(rez)
-                gst.update_state(card, third)
-
-            else:
-                state3 = duo_third_fun(third, gst)
-
-                # current vector of q table for this state
-                if state3 in duo_third:
-                    vector = duo_third[state3]
-                else:
-                    vector = [0 for i in range(duo_third_action_len)]
-                    duo_third[state3] = vector
-
-                # get card
-                rez = duo_third_action(vector, gst.player_hands[third], gst)
-                card, action_index3, num_possible_actions3 = qlearning.choose_action(rez)
-                gst.update_state(card, third)
-
-            #zaenkrat bo reward function samo točke, ki smo jih nabrali po stacku
-            points = gst.eval_stack(gst.stack)
-            winner = gst.current_winning_player
-
-            # state1, action_index1, num_possible_actions1
-            if first == winner:
-                if first not in gst.duo:
-                    qlearning.update_table(solo_first, state1, action_index1, points*num_possible_actions1)
-                else:
-                    qlearning.update_table(duo_first, state1, action_index1, points * num_possible_actions1)
-            else:
-                if first not in gst.duo:
-                    qlearning.update_table(solo_first, state1, action_index1, -1*points*num_possible_actions1)
-                else:
-                    if winner in gst.duo:
-                        qlearning.update_table(duo_first, state1, action_index1, 0.5* points * num_possible_actions1)
-                    else:
-                        qlearning.update_table(duo_first, state1, action_index1, -1 * 0.5 * points * num_possible_actions1)
-
-            # state2, action_index2, num_possible_actions2
-            if second == winner:
-                if second not in gst.duo:
-                    qlearning.update_table(solo_second, state2, action_index2, points*num_possible_actions2)
-                else:
-                    qlearning.update_table(duo_second, state2, action_index2, points * num_possible_actions2)
-            else:
-                if second not in gst.duo:
-                    qlearning.update_table(solo_second, state2, action_index2, -1 * points * num_possible_actions2)
-                else:
-                    if winner in gst.duo:
-                        qlearning.update_table(duo_second, state2, action_index2, 0.5 * points * num_possible_actions2)
-                    else:
-                        qlearning.update_table(duo_second, state2, action_index2, -1 * 0.5 * points * num_possible_actions2)
-
-            # state3, action_idnex3, num_possible_actions3
-            if third == winner:
-                if third not in gst.duo:
-                    qlearning.update_table(solo_third, state3, action_index3, points*num_possible_actions3)
-                else:
-                    qlearning.update_table(duo_third, state3, action_index3, points * num_possible_actions3)
-            else:
-                if third not in gst.duo:
-                    qlearning.update_table(solo_third, state3, action_index3, -1 * points * num_possible_actions3)
-                else:
-                    if winner in gst.duo:
-                        qlearning.update_table(duo_third, state3, action_index3, 0.5 * points * num_possible_actions3)
-                    else:
-                        qlearning.update_table(duo_third, state3, action_index3, -1 * 0.5 * points * num_possible_actions3)
-
-            gst.clear_state()
+                rez = solo_third_action(vector, ma.player_hands[third], ma)
+                card, action_index1, num_possible_actions1 = qlearning.choose_action_testing(rez)
+                ma.update_state(card, third)
 
 
+            wp = ma.winning_card(ma.stack)
+            points_dict[ma.player_order[wp]] += ma.eval_stack(ma.stack)
+
+            ma.clear_state()
+
+
+        s += str(points_dict) + "\n"
+        ss += s
         count += 1
 
-    qlearning.pickle_table(solo_first, "solo_first_2_2.pickle")
-    #qlearning.pickle_table(solo_second, "solo_second_3_3.pickle")
-    #qlearning.pickle_table(solo_third, "solo_third_3_3.pickle")
-    #qlearning.pickle_table(duo_first, "duo_first_3_3.pickle")
-    #qlearning.pickle_table(duo_second, "duo_second_3_3.pickle")
-    #qlearning.pickle_table(duo_third, "duo_third_3_3.pickle")
+    file.write(ss)
+    file.close()
+
+
+
+
+
+
+
+
+
+
+
