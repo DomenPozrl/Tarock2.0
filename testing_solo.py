@@ -364,7 +364,7 @@ if __name__ == "__main__":
     qlearning = QLearning(1, 0.1, 0.2)
     count = 0
     number_of_games = 10000
-    file = open(player1 + "_" + player2 + "_" + player3, "w")
+    #file = open(player1 + "_" + player2 + "_" + player3, "w")
 
     ss = ""
     while count < number_of_games:
@@ -387,9 +387,14 @@ if __name__ == "__main__":
             first = ma.player_order[0]
             second = ma.player_order[1]
             third = ma.player_order[2]
-
+            
+            print("------------------------------------------------------------")
+            tb.print_hand(p1)
+            tb.print_hand(p2)
+            tb.print_hand(p3)
+            print("------------------------------------------------------------")
             if first == player1_id:
-
+                
                 # get state
                 state1 = solo_first_fun(first, ma)
 
@@ -404,39 +409,59 @@ if __name__ == "__main__":
                 rez = solo_first_action(vector, ma.player_hands[first], ma)
                 card, action_index1, num_possible_actions1 = qlearning.choose_action_testing(rez)
                 ma.update_state(card, first)
-
+                
                 if second == player2_id:
                     if player2 == "random":
                         card = ma.random_agent(second)
                     elif player2 == "LW":
                         card = ma.locally_worst_agent(second)
-                    else:
+                    elif player2 == "LB":
                         card = ma.locally_best_agent(second)
+                    elif player2 == "LBB":
+                        card = ma.locally_best_best_agent(second)
+                    else:
+                        raise NotImplemented
+
                     ma.update_state(card, second)
                 else:
                     if player3 == "random":
                         card = ma.random_agent(second)
                     elif player3 == "LW":
                         card = ma.locally_worst_agent(second)
-                    else:
+                    elif player3 == "LB":
                         card = ma.locally_best_agent(second)
+                    elif player3 == "LBB":
+                        card = ma.locally_best_best_agent(second)
+                    else:
+                        raise NotImplemented
                     ma.update_state(card, second)
+                
 
                 if third == player3_id:
                     if player3 == "random":
                         card = ma.random_agent(third)
                     elif player3 == "LW":
                         card = ma.locally_worst_agent(third)
-                    else:
+                    elif player3 == "LB":
                         card = ma.locally_best_agent(third)
+                    elif player3 == "LBB":
+                        card = ma.locally_best_best_agent(third)
+                    else:
+                        raise NotImplemented
+
                     ma.update_state(card, third)
                 else:
                     if player2 == "random":
                         card = ma.random_agent(third)
                     elif player2 == "LW":
                         card = ma.locally_worst_agent(third)
-                    else:
+                    elif player2 == "LB":
                         card = ma.locally_best_agent(third)
+                    elif player2 == "LBB":
+                        card = ma.locally_best_best_agent(third)
+                    else:
+                        raise NotImplemented
+
                     ma.update_state(card, third)
 
             elif second == player1_id:
@@ -446,18 +471,27 @@ if __name__ == "__main__":
                         card = ma.random_agent(first)
                     elif player2 == "LW":
                         card = ma.locally_worst_agent(first)
-                    else:
+                    elif player2 == "LB":
                         card = ma.locally_best_agent(first)
+                    elif player2 == "LBB":
+                        card = ma.locally_best_best_agent(first)
+                    else:
+                        raise NotImplemented
                     ma.update_state(card, first)
                 else:
                     if player3 == "random":
                         card = ma.random_agent(first)
                     elif player3 == "LW":
                         card = ma.locally_worst_agent(first)
-                    else:
+                    elif player3 == "LB":
                         card = ma.locally_best_agent(first)
+                    elif player3 == "LBB":
+                        card = ma.locally_best_best_agent(first)
+                    else:
+                        raise NotImplemented
                     ma.update_state(card, first)
 
+                
                 # get state
                 state1 = solo_second_fun(second, ma)
 
@@ -473,6 +507,7 @@ if __name__ == "__main__":
                 card, action_index1, num_possible_actions1 = qlearning.choose_action_testing(rez)
                 ma.update_state(card, second)
 
+                tb.print_hand(ma.stack)
 
 
                 if third == player3_id:
@@ -480,18 +515,27 @@ if __name__ == "__main__":
                         card = ma.random_agent(third)
                     elif player3 == "LW":
                         card = ma.locally_worst_agent(third)
-                    else:
+                    elif player3 == "LB":
                         card = ma.locally_best_agent(third)
+                    elif player3 == "LBB":
+                        card = ma.locally_best_best_agent(third)
+                    else:
+                        raise NotImplemented
                     ma.update_state(card, third)
                 else:
                     if player2 == "random":
                         card = ma.random_agent(third)
                     elif player2 == "LW":
                         card = ma.locally_worst_agent(third)
-                    else:
+                    elif player2 == "LB":
                         card = ma.locally_best_agent(third)
+                    elif player2 == "LBB":
+                        card = ma.locally_best_best_agent(third)
+                    else:
+                        raise NotImplemented
                     ma.update_state(card, third)
 
+                
             else:
 
                 if first == player2_id:
@@ -499,35 +543,53 @@ if __name__ == "__main__":
                         card = ma.random_agent(first)
                     elif player2 == "LW":
                         card = ma.locally_worst_agent(first)
-                    else:
+                    elif player2 == "LB":
                         card = ma.locally_best_agent(first)
+                    elif player2 == "LBB":
+                        card = ma.locally_best_best_agent(first)
+                    else:
+                        raise NotImplemented
                     ma.update_state(card, first)
                 else:
                     if player3 == "random":
                         card = ma.random_agent(first)
                     elif player3 == "LW":
                         card = ma.locally_worst_agent(first)
-                    else:
+                    elif player3 == "LB":
                         card = ma.locally_best_agent(first)
+                    elif player3 == "LBB":
+                        card = ma.locally_best_best_agent(first)
+                    else:
+                        raise NotImplemented
                     ma.update_state(card, first)
 
+                
                 if second == player2_id:
                     if player2 == "random":
                         card = ma.random_agent(second)
                     elif player2 == "LW":
                         card = ma.locally_worst_agent(second)
-                    else:
+                    elif player2 == "LB":
                         card = ma.locally_best_agent(second)
+                    elif player2 == "LBB":
+                        card = ma.locally_best_best_agent(second)
+                    else:
+                        raise NotImplemented
                     ma.update_state(card, second)
                 else:
                     if player3 == "random":
                         card = ma.random_agent(second)
                     elif player3 == "LW":
                         card = ma.locally_worst_agent(second)
-                    else:
+                    elif player3 == "LB":
                         card = ma.locally_best_agent(second)
+                    elif player3 == "LBB":
+                        card = ma.locally_best_best_agent(second)đ
+                    else:
+                        raise NotImplemented
                     ma.update_state(card, second)
 
+                
                 # get state
                 state1 = solo_third_fun(third, ma)
 
@@ -543,7 +605,7 @@ if __name__ == "__main__":
                 card, action_index1, num_possible_actions1 = qlearning.choose_action_testing(rez)
                 ma.update_state(card, third)
 
-
+                
             wp = ma.winning_card(ma.stack)
             points_dict[ma.player_order[wp]] += ma.eval_stack(ma.stack)
 
@@ -554,8 +616,8 @@ if __name__ == "__main__":
         ss += s
         count += 1
 
-    file.write(ss)
-    file.close()
+    #file.write(ss)
+    #file.close()
 
 
 

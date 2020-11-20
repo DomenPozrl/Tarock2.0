@@ -1,4 +1,5 @@
 from TarockBasics import TarockBasics
+import copy
 
 class GameStateTarock(TarockBasics):
 
@@ -17,7 +18,7 @@ class GameStateTarock(TarockBasics):
         self.player2_cards = p2
         self.player3_cards = p3
         self.player_hands = {ps[0]: self.player1_cards, ps[1]: self.player2_cards, ps[2]: self.player3_cards}
-
+        self.player_hands_copy = copy.deepcopy(self.player_hands)
         self.stack = []
         self.stack_players = []
         self.stack_value = 0
@@ -282,7 +283,7 @@ class GameStateTarock(TarockBasics):
         self.stack_players = []
         self.stack_value = 0
         self.stack_color = None
-
+        self.player_hands_copy = copy.deepcopy(self.player_hands)
         self.starting_player = self.current_winning_player
         self.second_player = self.players2[self.players2.index(self.starting_player) + 1]
         self.third_player = self.players2[self.players2.index(self.starting_player) + 2]

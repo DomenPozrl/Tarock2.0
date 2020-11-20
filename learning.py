@@ -339,6 +339,38 @@ def set_action_vars_version3():
     duo_third_action = solo_third_action
     duo_third_action_len = solo_third_action_len
 
+def set_table_function_vars_version4():
+    global solo_first
+    global solo_second
+    global solo_third
+    global duo_first
+    global duo_second
+    global duo_third
+    global solo_first_fun
+    global solo_second_fun
+    global solo_third_fun
+    global duo_first_fun
+    global duo_second_fun
+    global duo_third_fun
+
+    #get states version2 tables
+    solo_first = dict()
+    solo_second = solo_first
+    solo_third = solo_first
+    duo_first = solo_first
+    duo_second = solo_first
+    duo_third = solo_first
+
+    #get states version2 functions
+    solo_first_fun = get_state_version4
+    solo_second_fun = solo_first_fun
+    solo_third_fun = solo_first_fun
+    duo_first_fun = solo_first_fun
+    duo_second_fun = solo_first_fun
+    duo_third_fun = solo_first_fun
+
+
+
 if __name__ == "__main__":
 
     qlearning = QLearning(1, 0.1, 0.2)
@@ -350,7 +382,7 @@ if __name__ == "__main__":
     #that is because q table for version2 has only 1 table but the previously mentioned actions have two different size vectors
     #so this is a no go
 
-    set_table_function_vars_version2()
+    set_table_function_vars_version4()
     set_action_vars_version2()
     #print(solo_first, solo_second, solo_third, duo_first, duo_second, duo_third)
     while count < num_games:
@@ -475,6 +507,7 @@ if __name__ == "__main__":
             points = gst.eval_stack(gst.stack)
             winner = gst.current_winning_player
 
+
             # state1, action_index1, num_possible_actions1
             if first == winner:
                 if first not in gst.duo:
@@ -525,7 +558,7 @@ if __name__ == "__main__":
 
         count += 1
 
-    qlearning.pickle_table(solo_first, "solo_first_2_2.pickle")
+    qlearning.pickle_table(solo_first, "solo_first_4_2.pickle")
     #qlearning.pickle_table(solo_second, "solo_second_3_3.pickle")
     #qlearning.pickle_table(solo_third, "solo_third_3_3.pickle")
     #qlearning.pickle_table(duo_first, "duo_first_3_3.pickle")

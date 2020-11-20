@@ -1102,6 +1102,33 @@ def get_state_version3_duo_third(current_player_id, game_state: GameStateTarock)
 
     return tuple(vector)
 
+def get_state_version4(id, gst: GameStateTarock):
+
+    """
+    probimo kok daleč lahko pridemo samo z n x n tabelco
+    mogoče me ne sjebe memory error
+
+    state je basically 0 1 2 za vsako karto v igri
+    0 - ni je vec v igri
+    1 - nimam je jz ampak je se v igri
+    2 - jz jo mam
+    :param id:
+    :param gst:
+    :return:
+    """
+    vector = []
+    for card in gst.id_to_cards:
+        if card in gst.played_cards:
+            vector.append(0)
+        else:
+            if card not in gst.player_hands[id]:
+                vector.append(1)
+            else:
+                vector.append(2)
+
+    return tuple(vector)
+
+
 if __name__ == "__main__":
 
     print("Hello, world!")
